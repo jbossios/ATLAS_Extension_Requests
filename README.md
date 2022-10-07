@@ -17,5 +17,7 @@ It is used for obtaining the list of samples of interest to be deleted. Set ```S
 It is used for making an extension request using the list obtained using the above script. Set the following variables before running:
 
 ```filename```: Name of the file produced with the above script
+
 ```reason```: Reason for requesting an extension
+
 ```expiration_date```: New expiration date
