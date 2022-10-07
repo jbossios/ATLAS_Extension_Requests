@@ -1,3 +1,3 @@
 setupATLAS -3
 lsetup rucio
-setupVOMS
+voms-proxy-init -voms atlas
