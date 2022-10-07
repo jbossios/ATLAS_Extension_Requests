@@ -5,6 +5,7 @@ from multiprocessing import Pool
 import os
 from datetime import datetime
 
+
 def find_datasets(sample: str) -> list:
     '''
     Get list of datasets for a given container
@@ -21,18 +22,24 @@ def main(samples_file, adc_mon_file, debug = False):
     # Set logger
     logging.basicConfig(level = 'INFO' if not debug else 'DEBUG', format = '%(levelname)s: %(message)s')
     log = logging.getLogger('prepare_extension_request')
-    samples_module = importlib.import_module(samples_file.replace('/', '.').replace('.py', ''))
-    samples_dict = samples_module.mcSamples
-    log.info(f'Will check which datasets from samples_file are listed in {adc_mon_file}')
+    log.info(f'Will check which datasets from {samples_file} are listed in {adc_mon_file}')
     
     # Get full list of containers
     containers = []
-    for sample_key, samples_list in samples_dict.items():  # loop over sample keys
-        log.debug(f'sample = {sample_key}')
-        # Loop over containers
-        for container in samples_list:
-            log.debug(f'container = {container}')
-            containers.append(container)
+    if samples_file.endswith('.py'):
+        samples_module = importlib.import_module(samples_file.replace('/', '.').replace('.py', ''))
+        samples_dict = samples_module.mcSamples
+        for sample_key, samples_list in samples_dict.items():  # loop over sample keys
+            log.debug(f'sample = {sample_key}')
+            # Loop over containers
+            for container in samples_list:
+                log.debug(f'container = {container}')
+                containers.append(container)
+    elif samples_file.endswith('.txt'):
+        with open(samples_file, 'r') as ifile:
+            containers = [line.replace('\n', '') for line in ifile.readlines()]
+    else:
+        log.fatal(f'Format not supported: {samples_file}')
     
     # Get full list of datasets
     with Pool(4) as pool:
@@ -62,6 +69,7 @@ def main(samples_file, adc_mon_file, debug = False):
 
 
 if __name__ == '__main__':
-    samples_file = 'Samples/STDM4_mcSamples.py'
+    #samples_file = 'Samples/STDM4_mcSamples.py'
+    samples_file = 'Samples/PHYS_RPVsamples.txt'
     adc_mon_file = 'adc-mon-inputs/07102022/everything.txt'
     main(samples_file, adc_mon_file, False)
