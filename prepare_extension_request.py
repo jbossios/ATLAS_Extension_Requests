@@ -10,9 +10,17 @@ def find_datasets(sample: str) -> list:
     '''
     Get list of datasets for a given container
     '''
-    rucio = Client()
-    scope = sample.split('.')[0]
-    return [sample['name'] for sample in rucio.list_content(scope=scope, name=sample)]
+    if 'tid' not in sample:  # look for datasets in this container
+      rucio = Client()
+      scope = sample.split('.')[0]
+      return [sample['name'] for sample in rucio.list_content(scope=scope, name=sample)]
+    return [sample]  # it is already a dataset
+
+
+def remove_scope(sample: str) -> str:
+    if ':' in sample:
+        return sample.split(':')[1]
+    return sample
 
 
 def main(samples_file, adc_mon_file, debug = False):
@@ -37,7 +45,7 @@ def main(samples_file, adc_mon_file, debug = False):
                 containers.append(container)
     elif samples_file.endswith('.txt'):
         with open(samples_file, 'r') as ifile:
-            containers = [line.replace('\n', '') for line in ifile.readlines()]
+            containers = [remove_scope(line.replace('\n', '')) for line in ifile.readlines()]
     else:
         log.fatal(f'Format not supported: {samples_file}')
     
@@ -70,6 +78,9 @@ def main(samples_file, adc_mon_file, debug = False):
 
 if __name__ == '__main__':
     #samples_file = 'Samples/STDM4_mcSamples.py'
-    samples_file = 'Samples/PHYS_RPVsamples.txt'
+    #samples_file = 'Samples/PHYS_RPVsamples.txt'
+    #samples_file = 'Samples/SmallREtaIntercalibration_samples.txt'
+    #samples_file = 'Samples/JETM3_Zjet.txt'
+    samples_file = 'Samples/JETM4_gammajet.txt'
     adc_mon_file = 'adc-mon-inputs/07102022/everything.txt'
-    main(samples_file, adc_mon_file, False)
+    main(samples_file, adc_mon_file, True)
