@@ -1,8 +1,9 @@
 from rucio.client import Client
 import importlib
 import logging
-from multiprocessing import Pool
 import os
+import sys
+from multiprocessing import Pool
 from datetime import datetime
 
 
@@ -13,14 +14,30 @@ def find_datasets(sample: str) -> list:
     if 'tid' not in sample:  # look for datasets in this container
       rucio = Client()
       scope = sample.split('.')[0]
-      return [sample['name'] for sample in rucio.list_content(scope=scope, name=sample)]
+      datasets = [dataset['name'] for dataset in rucio.list_content(scope=scope, name=sample)]
+      if not len(datasets):
+          print(f'WARNING: No datasets were found for sample={sample}STOP')
+      return datasets
     return [sample]  # it is already a dataset
 
 
 def remove_scope(sample: str) -> str:
+    '''
+    Remove scope from container name
+    e.g. mc16_13TeV:mc16_TeV.dsid -> e.g. mc16_TeV.dsid
+    '''
     if ':' in sample:
         return sample.split(':')[1]
     return sample
+
+
+def format_line(line: str) -> str:
+    '''
+    Format string:
+     remove end of line
+     remove leading and trailing whitespaces
+    '''
+    return remove_scope(line.replace('\n', '').strip())
 
 
 def main(samples_file, adc_mon_file, debug = False):
@@ -34,6 +51,9 @@ def main(samples_file, adc_mon_file, debug = False):
     
     # Get full list of containers
     containers = []
+    if not os.path.exists(samples_file):
+        log.fatal(f'{samples_file} can not be found, exiting')
+        sys.exit(1)
     if samples_file.endswith('.py'):
         samples_module = importlib.import_module(samples_file.replace('/', '.').replace('.py', ''))
         samples_dict = samples_module.mcSamples
@@ -45,7 +65,7 @@ def main(samples_file, adc_mon_file, debug = False):
                 containers.append(container)
     elif samples_file.endswith('.txt'):
         with open(samples_file, 'r') as ifile:
-            containers = [remove_scope(line.replace('\n', '')) for line in ifile.readlines()]
+            containers = [format_line(line) for line in ifile.readlines() if format_line(line) and not line.startswith('#')]
     else:
         log.fatal(f'Format not supported: {samples_file}')
     
@@ -70,17 +90,18 @@ def main(samples_file, adc_mon_file, debug = False):
     now = datetime.now()
     date = now.strftime("%d%m%Y")
     output_file_name = f'{out_folder_name}{samples_file.split("/")[-1].replace(".py", "")}_{date}.txt'
-    log.info(f'Datasets to be deleted saved to {output_file_name}')
-    with open(output_file_name, 'w') as ofile:
-        for match in matches:
-            ofile.write(match + '\n')
+    if len(matches):
+        log.info(f'Datasets to be deleted saved to {output_file_name}')
+        with open(output_file_name, 'w') as ofile:
+            for match in matches:
+                ofile.write(match + '\n')
+    else:
+        log.info(f'No datasets will be deleted')
 
 
 if __name__ == '__main__':
-    #samples_file = 'Samples/STDM4_mcSamples.py'
-    #samples_file = 'Samples/PHYS_RPVsamples.txt'
-    #samples_file = 'Samples/SmallREtaIntercalibration_samples.txt'
-    #samples_file = 'Samples/JETM3_Zjet.txt'
-    samples_file = 'Samples/JETM4_gammajet.txt'
+    samples_file = 'Samples/Insitu/R21_JETM1_SmallR_EtaIntercalibration.txt'
+    #samples_file = 'Samples/Insitu/R21_JETM3_SmallR_Zjet.txt'
+    #samples_file = 'Samples/Insitu/R21_JETM4_SmallR_gammajet.txt'
     adc_mon_file = 'adc-mon-inputs/07102022/everything.txt'
-    main(samples_file, adc_mon_file, True)
+    main(samples_file, adc_mon_file, False)
