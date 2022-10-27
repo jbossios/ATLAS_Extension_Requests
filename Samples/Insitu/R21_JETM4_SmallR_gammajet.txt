@@ -1,3 +1,5 @@
+# JETM4 derivations used by Miguel Martin for the R21 small-R gamma+jet in situ JES calibration for the precision paper
+
 data15_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM4.grp15_v01_p4356
 data15_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM4.grp15_v01_p4356
 data15_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM4.grp15_v01_p4356
