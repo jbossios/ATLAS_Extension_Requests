@@ -280,5 +280,4 @@ if __name__ == '__main__':
     samples_file = 'Samples/Insitu/R21_JETM1_SmallR_EtaIntercalibration.txt'
     #samples_file = 'Samples/Insitu/R21_JETM3_SmallR_Zjet.txt'
     #samples_file = 'Samples/Insitu/R21_JETM4_SmallR_gammajet.txt'
-    #samples_file = 'testing.txt'
     main(samples_file)
