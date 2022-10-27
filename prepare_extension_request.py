@@ -266,7 +266,7 @@ def main(samples_file):
         os.makedirs(out_folder_name)
     now = datetime.now()
     date = now.strftime("%d%m%Y")
-    output_file_name = f'{out_folder_name}{samples_file.split("/")[-1].replace(".py", "")}_{date}.txt'
+    output_file_name = f'{out_folder_name}{samples_file.split("/")[-1].replace(".py", "").replace(".txt", "")}_{date}.txt'
     if len(matches):
         log.info(f'Datasets to be deleted ({len(matches)}) saved to {output_file_name}')
         with open(output_file_name, 'w') as ofile:
