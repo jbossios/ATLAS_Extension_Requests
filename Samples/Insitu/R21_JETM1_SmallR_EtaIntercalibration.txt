@@ -1,3 +1,5 @@
+# Samples used by Louis Ginabat for the R21 small-R Eta-Intercalibration for the precision paper
+
 mc16_13TeV.364700.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ0WithSW.deriv.DAOD_JETM1.e7142_s3126_r9364_p4870
 mc16_13TeV.364701.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ1WithSW.deriv.DAOD_JETM1.e7142_s3126_r9364_p4870
 mc16_13TeV.364702.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ2WithSW.deriv.DAOD_JETM1.e7142_s3126_r9364_p4870

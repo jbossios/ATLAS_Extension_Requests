@@ -1,4 +1,4 @@
-# JETM3 samples used for small-R Z+jet in situ calibration
+# JETM3 samples used by Alex Bunka for the R21 small-R Z+jet in situ JES calibration for the precision paper
 
 data18_13TeV.periodB.physics_Main.PhysCont.DAOD_JETM3.grp18_v01_p5113  
 data18_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM3.grp18_v01_p5113  
